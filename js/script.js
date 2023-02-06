@@ -51,7 +51,8 @@ const optArticleSelector = '.post',
     optTitleSelector = '.post-title',
     optTitleListSelector = '.titles',
     optArticleTagsSelector = '.post-tags .list',
-    optArticleAuthorSelector = '.post-author';
+    optArticleAuthorSelector = '.post-author',
+    optTagsListSelector = '.tags .list';
 
 function generateTitleLinks(customSelector = ''){
 
@@ -98,6 +99,9 @@ function generateTitleLinks(customSelector = ''){
 generateTitleLinks();
 
 function generateTags() {
+  /* [NEW] create a new variable allTags with an empty object*/
+    let allTags = {};
+
   /* find all articles */
   const articles = document.querySelectorAll(optArticleSelector);
 
@@ -127,16 +131,35 @@ function generateTags() {
       /* add generated code to html variable */
       html = html + linkHTML;
 
-      /* END LOOP: for each tag */
+      /* [NEW] check if this link is NOT already in allTags */
+        if (!allTags.hasOwnProperty(tag)) {
+            /* [NEW] add generated code to allTags array */
+            allTags[tag] = 1;
+
+            /* END LOOP: for each tag */
+        } else {
+            allTags[tag]++;
+        }
+    /* END LOOP: for each tag */
     }
 
     /* insert HTML of all the links into the tags wrapper */
     wrapper.innerHTML = html;
 
     /* END LOOP: for every article: */
-
-
   }
+
+  /* [NEW] find list of tags in right column */
+    const tagList = document.querySelector(optTagsListSelector);
+    console.log(optTagsListSelector);
+    console.log(tagList);
+
+    let allTagsHTML = '';
+    for (let tag in allTags) {
+        allTagsHTML += '<li><a href="' + tag + '">' + tag + ' (' + allTags[tag] + ') ' + '</a></li>';
+        console.log(allTagsHTML);
+    }
+    tagList.innerHTML = allTagsHTML;
 }
 
 generateTags();
@@ -225,9 +248,7 @@ function authorClickHandler(event) {
     for (let authorLink of authorLinks) {
         authorLink.classList.add('active');
     }
-    console.log(author);
     const authorLink = author.replace('#', '');
-    console.log(authorLink);
     generateTitleLinks('[data-author="' + authorLink + '"]');
 
 }
